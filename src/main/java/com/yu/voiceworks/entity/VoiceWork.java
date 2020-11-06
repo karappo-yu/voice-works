@@ -11,13 +11,6 @@ import java.util.Set;
 @Builder
 @ToString
 public class VoiceWork {
-//    title: null,
-//    circle: null,
-//    age_ratings: null,
-//    release: null,
-//    series: null,
-//    tags: [],
-//    vas: []
     private String id;
 
     private String title;
