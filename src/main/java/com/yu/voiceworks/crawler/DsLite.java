@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.yu.voiceworks.entity.*;
+import com.yu.voiceworks.entity.po.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -43,6 +44,14 @@ public class DsLite {
 
     private static String LANG = "ja-jp";
 
+    public static Set<Tag> getAllTags() {
+        //TODO
+        return null;
+    }
+
+    /**下载给定的rj号的图片到 @IMAG_PATH 下，包括大图和小图
+     * @param rjCode
+     */
     public static void getImage(String rjCode){
 
         int id = Integer.parseInt(rjCode);
@@ -89,8 +98,8 @@ public class DsLite {
         }
     }
 
-    /**
-     * @param id
+    /**爬取给定rj号的动态信息并解析
+     * @param id rj号
      * @return
      */
     public static VoiceWorkDynamic getDynamicData(String id){
@@ -103,7 +112,6 @@ public class DsLite {
                     .timeout(TIME_OUT).get();
         } catch (IOException e) {
             log.error("[RJ{}] 获取动态数据异常:{}",id,e.getMessage());
-            e.printStackTrace();
         }
         String jsonData = document.text();
         VoiceWorkDynamic one = parseJsonData(jsonData,id);
@@ -157,7 +165,7 @@ public class DsLite {
                 ranks.add(new Rank(term,category,rank,rank_date));
             }
 
-           return VoiceWorkDynamic.builder().id(id)
+           return VoiceWorkDynamic.builder().workId(id)
                     .price(price)
                     .dlCount(dlCount)
                     .rateAverage(rateAverage)
@@ -173,6 +181,10 @@ public class DsLite {
         return null;
     }
 
+    /**爬取给定rj号的静态信息并解析
+     * @param rjCode
+     * @return
+     */
     public static VoiceWork getStaticMetaData(String rjCode){
         String url = BASE_URL+rjCode+".html";
         Document document = null;
@@ -184,7 +196,6 @@ public class DsLite {
                     .timeout(TIME_OUT).get();
         } catch (IOException e) {
             log.error("[RJ{}] 获取音声静态数据异常{}",rjCode,e.getMessage());
-            e.printStackTrace();
         }
         if (null!=document){
             LANG = document.getElementsByTag("html").get(0).attr("lang");
@@ -291,7 +302,7 @@ public class DsLite {
     }
 
     private static Series getSeries(Document document) {
-        Series series = new Series();
+        Series series = null;
         Elements elements = document.getElementById("work_outline").child(0).children();
         for (Element element : elements) {
             String text = element.child(0).text();
@@ -301,7 +312,7 @@ public class DsLite {
                 String seriesName = a.text();
                 String href = a.attr("href");
                 String seriesId = href.substring(href.indexOf("SRI"), href.indexOf("SRI")+13);
-
+                series = new Series();
                 series.setSeriesId(seriesId);
                 series.setSeriesName(seriesName);
             }

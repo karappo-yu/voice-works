@@ -1,10 +1,10 @@
 package com.yu.voiceworks.entity;
 
+import com.yu.voiceworks.entity.po.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -34,4 +34,18 @@ public class VoiceWork {
     private Set<Cv> cvs;
 
     private String workFormat = "ボイス・ASMR";
+
+    public WorkInfo toWorkInfo(){
+        WorkInfo one = new WorkInfo();
+        one.setWorkId(id);
+        one.setWorkTitle(title);
+        one.setAgeRatings(ageRatings);
+        one.setWorkFormat(workFormat);
+        one.setWorkScenario(scenario);
+        one.setImageAuthor(imageAuthor);
+        one.setWorkRelease(release);
+        if (null!=circle) one.setCircleId(circle.getCircleId());
+        if (null!=series)one.setSeriesId(series.getSeriesId());
+        return one;
+    }
 }

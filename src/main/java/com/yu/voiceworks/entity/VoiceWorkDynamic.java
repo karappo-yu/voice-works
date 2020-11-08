@@ -1,7 +1,11 @@
 package com.yu.voiceworks.entity;
 
+import com.yu.voiceworks.entity.po.Rank;
+import com.yu.voiceworks.entity.po.RateCountDetail;
+import com.yu.voiceworks.entity.po.WorkDyn;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
 
 import java.util.List;
 
@@ -17,7 +21,7 @@ public class VoiceWorkDynamic {
     review_count: data.review_count,
     rank: data.rank */
 
-    private String id ;
+    private String workId ;
 
     private Integer price; // 价格
 
@@ -35,5 +39,9 @@ public class VoiceWorkDynamic {
 
     private List<Rank> rank; // 历史销售成绩
 
-
+    public WorkDyn toWorkDyn(){
+        WorkDyn one = new WorkDyn();
+        BeanUtils.copyProperties(this,one);
+        return one;
+    }
 }
