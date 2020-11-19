@@ -1,5 +1,6 @@
 package com.yu.voiceworks.entity.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.yu.voiceworks.entity.po.*;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +20,7 @@ public class VoiceWorkVo {
 
     private Boolean nsfw;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date release;
 
     private Integer dlCount;

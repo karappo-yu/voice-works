@@ -9,8 +9,14 @@ spring:
       ddl-auto: update
 
     database: mysql
-    show-sql: true
+    open-in-view: false
+  #    show-sql: true
   jackson:
     default-property-inclusion: non_null
+server:
+  port: 7846
+
+
+
 
 

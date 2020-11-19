@@ -1,6 +1,10 @@
 package com.yu.voiceworks.filesystem;
 
+import com.yu.voiceworks.config.SSYKConfigProperties;
 import com.yu.voiceworks.entity.po.WorkDir;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.HashSet;
@@ -8,17 +12,23 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Component
+@EnableConfigurationProperties(SSYKConfigProperties.class)
 public class FileScanner {
 
     private static Pattern PATTERN = Pattern.compile("[rR][jJ]\\d{6}");
 
-    public static String BASE_PATH = "f://voice";
+    public  String basePath;
 
-    public static int SCAN_DEPTH = 2;
+    public  int scanDepth = 2;
 
+    @Autowired(required = false)
+    public FileScanner(SSYKConfigProperties properties) {
+        this.basePath = properties.getBasePath();
+        this.scanDepth = properties.getScanDepth();
+    }
 
-
-    public static Set<WorkDir> scan(File basePath) {
+    public  Set<WorkDir> scan(File basePath) {
         if (!basePath.exists()) {
             basePath.mkdir();
         }
@@ -35,8 +45,8 @@ public class FileScanner {
                         String path = file.getPath();
                         dirs.add(new WorkDir(id, path));
                     }else {//没有找到就递归继续查找该目录,并把结果加入Set
-                        if (SCAN_DEPTH>0){
-                            SCAN_DEPTH--;
+                        if (this.scanDepth>0){
+                            this.scanDepth--;
                             Set<WorkDir> result = scan(file);
                             dirs.addAll(result);
                         }
@@ -46,8 +56,8 @@ public class FileScanner {
         }
         return dirs;
     }
-    public static Set<WorkDir> scanBasePath(){
+    public  Set<WorkDir> scanBasePath(){
 
-        return scan(new File(BASE_PATH));
+        return scan(new File(this.basePath));
     }
 }

@@ -1,11 +1,12 @@
 package com.yu.voiceworks.service.imp;
 
-import com.yu.voiceworks.FileType;
+import com.yu.voiceworks.enums.FileType;
 import com.yu.voiceworks.entity.po.WorkDir;
 import com.yu.voiceworks.entity.vo.TrackFile;
+import com.yu.voiceworks.enums.SSYKExceptionEnum;
+import com.yu.voiceworks.exception.SSYKException;
 import com.yu.voiceworks.repository.WorkDirRepository;
 import com.yu.voiceworks.utils.RegexUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Service
 public class TrackServiceImp {
@@ -24,18 +24,17 @@ public class TrackServiceImp {
 
     public List<TrackFile> getTrackFilesByRjCode(String rjCode) {
         Optional<WorkDir> workDirOptional = workDirRepository.findById(rjCode);
-        List<TrackFile> list = null;
         if (workDirOptional.isPresent()) {
             String dirPath = workDirOptional.get().getDirPath();
-            list = getTrackFilesByPath(dirPath);
+            return getTrackFilesByPath(dirPath);
         }
-        return list;
+        throw new SSYKException(SSYKExceptionEnum.NO_SUCH_WORK);
     }
 
     public List<TrackFile> getTrackFilesByPath(String dirPath) {
         File[] files = new File(dirPath).listFiles();
-        if (null==files){
-            return null;
+        if (null==files||files.length==0){
+            throw new SSYKException(SSYKExceptionEnum.DIR_IS_EMPTY);
         }
         List<TrackFile> trackFileList = new LinkedList<>();
         Arrays.stream(files).forEach(

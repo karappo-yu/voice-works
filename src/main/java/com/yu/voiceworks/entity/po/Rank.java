@@ -12,7 +12,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "table_rank")
-
 public class Rank {
 //    term": "day",
 //            "category": "all",

@@ -2,15 +2,17 @@ package com.yu.voiceworks.entity.po;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Table
 @Entity
 @Data
 public class WorkTag {
+
     @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Integer id;
+
     private String tagId;
 
 

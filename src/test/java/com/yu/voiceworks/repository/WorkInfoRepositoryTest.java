@@ -18,12 +18,5 @@ public class WorkInfoRepositoryTest {
     @Autowired
     WorkInfoRepository workInfoRepository;
 
-    @Test
-    public void test() {
-        Set<WorkDir> workDirs = FileScanner.scanBasePath();
-        for (WorkDir workDir : workDirs) {
-            VoiceWork voiceWork = DsLite.getStaticMetaData(workDir.getWorkId());
-            workInfoRepository.save(voiceWork.toWorkInfo());
-        }
-    }
+
 }

@@ -50,6 +50,10 @@ public class AdminServiceImp implements AdminService {
 
     private WorkServiceImp workServiceImp;
 
+    private DsLite dsLite;
+
+    private FileScanner fileScanner;
+
 
     /**
      *
@@ -61,19 +65,19 @@ public class AdminServiceImp implements AdminService {
 
         List<WorkDir> oldList = new LinkedList<>();
         //扫描本地目录
-        Set<WorkDir> workDirs = FileScanner.scanBasePath();
+        Set<WorkDir> workDirs = fileScanner.scanBasePath();
         //对比数据库记录
         check(updateList, oldList, workDirs);
         //爬取音声作品静态数据
         if (updateList.size()>0) {
             log.info("[开始爬取音声静态数据]...................");
             List<VoiceWork> voiceWorkList = updateList.stream().map(WorkDir::getWorkId)
-                    .map(DsLite::getStaticMetaData)
+                    .map(dsLite::getMetaData)
                     .collect(Collectors.toList());
             //爬取音声作品动态数据
             log.info("[开始爬取音声动态数据]...................");
             List<VoiceWorkDynamic> voiceWorkDynamicList = updateList.stream().map(WorkDir::getWorkId)
-                    .map(DsLite::getDynamicData).collect(Collectors.toList());
+                    .map(dsLite::getDynamicData).collect(Collectors.toList());
             log.info("[开始插入数据到数据库]...................");
             //插入voiceWork数据
             saveVoiceWorks(voiceWorkList);
@@ -119,7 +123,7 @@ public class AdminServiceImp implements AdminService {
         return false;
     }
     private void downloadImages(List<WorkDir> updateList) {
-        updateList.stream().map(WorkDir::getWorkId).forEach(DsLite::getImage);
+        updateList.stream().map(WorkDir::getWorkId).forEach(dsLite::getImage);
     }
 
     @Transactional
@@ -213,7 +217,10 @@ public class AdminServiceImp implements AdminService {
                            RankRepository rankRepository,
                            WorkDynRepository workDynRepository,
                            WorkTagRepository workTagRepository,
-                           WorkServiceImp workServiceImp) {
+                           WorkServiceImp workServiceImp,
+                           DsLite dsLite,
+                           FileScanner fileScanner
+                           ) {
         this.workDirRepository = workDirRepository;
         this.workInfoRepository = workInfoRepository;
         this.circleRepository = circleRepository;
@@ -226,5 +233,7 @@ public class AdminServiceImp implements AdminService {
         this.workDynRepository = workDynRepository;
         this.workTagRepository = workTagRepository;
         this.workServiceImp = workServiceImp;
+        this.dsLite = dsLite;
+        this.fileScanner = fileScanner;
     }
 }
